@@ -26,3 +26,65 @@ plot(pressure)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+## Packages
+For this Assignment, the following packages will be used:
+```{r packages}
+library(tidyverse)
+library(palmerpenguins)
+library(ggplot2)
+```
+***
+
+## Exercise 1 - Make a function
+
+#' Group and Count
+#'
+#' Using this function, you will be able to group your data by a specified variable (x), and count the number of items contained in another variable (y)
+#'
+#' @params data The data that you will be using for this function
+#' @params x The variable in which you will be grouping the data by
+#' @params y The additional variable in which  be grouping the data by
+```{r penguins}
+group_and_count <- function(data, x, y) {
+  data %>%
+    group_by({{ x }}) %>%
+    count({{ y }})
+}
+
+group_and_count(penguins, species, year)
+```
+#' Group & Summarize
+#'
+#' Using this function, you will be able to group your data by a specified variable (x), and create four columns indicating:
+#' Max_Minus_Min
+#' Mean
+#' Stdev
+#' IQR
+#'
+#' @params data The data that you will be using for this function
+#' @params x The variable in which you will be grouping the data by
+#' @params y The numerical variable where you
+
+
+```{r penguins}
+Data_overview <- function(data, x, y, na.rm = TRUE) {
+  data %>%
+  group_by({{ x }}) %>%
+    if(!is.numeric({{ y }})) {
+      stop('Oops! You must enter a numerical variable for your second variable, for this function to work')
+      }
+  summarise(Max_Minus_Min = (max({{ y }}) - min({{ y }})),
+            Mean = mean({{ y }}),
+            Stdev = sd({{ y }}),
+            IQR = IQR({{ y }}))
+}
+
+Data_overview(penguins, species, island)
+```
+
+
+
+
+
+
