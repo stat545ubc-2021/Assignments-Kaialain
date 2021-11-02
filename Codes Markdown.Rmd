@@ -33,55 +33,8 @@ For this Assignment, the following packages will be used:
 library(tidyverse)
 library(palmerpenguins)
 library(ggplot2)
+library(testthat)
 ```
-***
-
-#' @title Group and Count
-#'
-#' @description Using this function, you will be able to group your data by a specified variable (x), and count the number of items contained in another variable (y). Note that this function will work best with categorical variables for x and y, 
-#'
-#' @params data The data that you will be using for this function.
-#' @params x The variable in which you will be grouping the data by.
-#' @params y The additional variable in which  be grouping the data by.
-#'
-#' @return This function will return the number of items contained in the grouping variable (x), and for each category of (y).
-#' 
-#' @examples 
-#' group_and_count(mtcars, cyl, gear)
-#' group_and_count(ToothGrowth, supp, dose)
-#'
-
-```{r penguins}
-group_and_count <- function(data, x, y) {
-  data %>%
-    group_by({{ x }}) %>%
-    count({{ y }})
-}
-
-head(penguins)
-
-
-group_and_count(penguins, species, year)
-
-
-penguins %>%
-  mutate(
-    mean_of_X = mean(bill_length_mm, na.rm = TRUE),
-    Max_Minus_Min = (max({{ y }}) - min({{ y }})))
-```
-
-
-#Testing the Function
-
-```{r testing}
-
-
-
-
-```
-
-
-# Dear TA, The following is another function that I was trying to create, but it does not work. I couldn't quite figure out why the error is happening. I worked hard on it though, and I didn't want to just remove it, so I decided to keep it in my assignment.
 
 #' @title Group & Summarize
 #'
@@ -89,33 +42,95 @@ penguins %>%
 #' Max_Minus_Min
 #' Mean
 #' Stdev
-#' IQR
+#' Note that this second variable (y) MUST be a numerical variable for this function to work, as the range (max - min), mean, and standard deviation of categorical variables cannot be calculated.
 #'
 #' @params data The data that you will be using for this function.
 #' @params x The variable in which you will be grouping the data by.
 #' @params y The numerical variable of interest. This variable MUST be a numerical variable for this function to work.
-#' @return This function will return descriptive characteristics of the numerical variable (y), where the range (max - min), mean, standard deviation, and interquartile range will be calculated.
+#' @return This function will return descriptive characteristics of the numerical variable (y), where the range (max - min), mean, and the standard deviation will be calculated.
 #'
 #' 
 #' @examples
 #' Data_overview(penguins, island, flipper_length_mm)
 #' Data_overview(iris, Species, Sepal.Length)
 
-```{r penguins}
+```{r creating the Data_overview function}
 Data_overview <- function(data, x, y, na.rm = TRUE) {
-   if(!is.numeric({{ y }})) {
-      stop('Oops! You must enter a numerical variable for your second variable for this function to work')
-   }
+  check <- dplyr::summarise(data, is.numeric({{ y }}))
+  if (!check[[1]]) {
+    stop("Oops! You must enter a numerical variable for your variable (y) for this function to work")
+  }
 data %>%
-  group_by({{ x }}) %>%
-  summarise(Max_Minus_Min = (max({{ y }}) - min({{ y }})),
+  na.omit() %>%
+  dplyr::group_by({{ x }}) %>%
+  dplyr::summarise(Max_Minus_Min = (max({{ y }}) - min({{ y }})),
             Mean = mean({{ y }}),
-            Stdev = sd({{ y }}),
-            IQR = IQR({{ y }}))
+            Stdev = sd({{ y }}))
 }
-
-Data_overview(penguins, species, island)
 ```
+
+
+```{r running the Data_overview function on the palmer penguins dataset}
+
+Data_overview(penguins, species, body_mass_g)
+
+```
+
+#Testing the function
+
+#The following test ensures that when the variable (y) is a non-numerical variable, then an error is expected. Additionally, the following test ensures that the output of the function is a dataframe.
+
+```{r testing Data_overview function}
+test_that("Testing the Data_overview function", {
+  a <- c(2, 2)
+  b <- c(2, 4)
+  c <- as.factor(c("Agree", "Disagree" ))
+  testing_dataframe <- data.frame (a, b, c)
+
+ expect_error(Data_overview(testing_dataframe, a, c))
+ expect_s3_class(Data_overview(testing_dataframe, a, b), "data.frame")
+})
+```
+
+#The following three codes tests specifically the computations within the Data_overview function to ensure that hte values range (max - min), mean, and standard deviation are correct. The test was done using expect_equal () function.
+
+```{r testing the Max_minus_min code}
+test_that( "Testing the Max_minus_min computation within the Data_overview function", { 
+  Data_overview_maxmin <- function(x, na.rm = TRUE) {
+    Max_minus_min = (max({{ x }}) - min({{ x }}))
+  }
+  a <- c(24, 20)
+expect_equal(Data_overview_maxmin(a), 4)  
+})  
+```
+
+```{r testing the Mean code}
+test_that( "Testing the Mean computation within the Data_overview function", { 
+  Data_overview_mean <- function(x, na.rm = TRUE) {
+    Mean = mean({{ x }})
+  }
+  a <- c(24, 20)
+expect_equal(Data_overview_mean(a), 22)  
+})     
+```
+
+
+#In the following code chunk, I learned that although the standard deviation of 24 and 20 is ROUGHLY 2.828, simply comparing the output to "2.828" is not equal, and thus outputs an error. If I were to replace 2.828 with "sd(a)", then the test will pass.
+
+
+```{r testing the Standard deviation code}
+test_that( "Testing the Standard deviation computation within the Data_overview function", { 
+  Data_overview_Stdev <- function(x, na.rm = TRUE) {
+     Stdev = sd({{ x }})
+  }
+  a <- c(24, 20)
+expect_equal(Data_overview_Stdev(a), 2.828)
+})     
+```
+
+
+
+
 
 
 
