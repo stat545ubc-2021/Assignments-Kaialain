@@ -1,0 +1,139 @@
+---
+title: "Codes"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+## Packages
+For this Assignment, the following packages will be used:
+```{r packages}
+library(tidyverse)
+library(palmerpenguins)
+library(ggplot2)
+library(testthat)
+```
+
+#' @title Group & Summarize
+#'
+#' @description Using this function, you will be able to group your data by a specified variable (x), and create four columns indicating:
+#' Max_Minus_Min
+#' Mean
+#' Stdev
+#' Note that this second variable (y) MUST be a numerical variable for this function to work, as the range (max - min), mean, and standard deviation of categorical variables cannot be calculated.
+#'
+#' @params data The data that you will be using for this function.
+#' @params x The variable in which you will be grouping the data by.
+#' @params y The numerical variable of interest. This variable MUST be a numerical variable for this function to work.
+#' @return This function will return descriptive characteristics of the numerical variable (y), where the range (max - min), mean, and the standard deviation will be calculated.
+#'
+#' 
+#' @examples
+#' Data_overview(penguins, island, flipper_length_mm)
+#' Data_overview(iris, Species, Sepal.Length)
+
+```{r creating the Data_overview function}
+Data_overview <- function(data, x, y, na.rm = TRUE) {
+  check <- dplyr::summarise(data, is.numeric({{ y }}))
+  if (!check[[1]]) {
+    stop("Oops! You must enter a numerical variable for your variable (y) for this function to work")
+  }
+data %>%
+  na.omit() %>%
+  dplyr::group_by({{ x }}) %>%
+  dplyr::summarise(Max_Minus_Min = (max({{ y }}) - min({{ y }})),
+            Mean = mean({{ y }}),
+            Stdev = sd({{ y }}))
+}
+```
+
+
+```{r running the Data_overview function on the palmer penguins dataset}
+
+Data_overview(penguins, species, body_mass_g)
+
+```
+
+#Testing the function
+
+#The following test ensures that when the variable (y) is a non-numerical variable, then an error is expected. Additionally, the following test ensures that the output of the function is a dataframe.
+
+```{r testing Data_overview function}
+test_that("Testing the Data_overview function", {
+  a <- c(2, 2)
+  b <- c(2, 4)
+  c <- as.factor(c("Agree", "Disagree" ))
+  testing_dataframe <- data.frame (a, b, c)
+
+ expect_error(Data_overview(testing_dataframe, a, c))
+ expect_s3_class(Data_overview(testing_dataframe, a, b), "data.frame")
+})
+```
+
+#The following three codes tests specifically the computations within the Data_overview function to ensure that hte values range (max - min), mean, and standard deviation are correct. The test was done using expect_equal () function.
+
+```{r testing the Max_minus_min code}
+test_that( "Testing the Max_minus_min computation within the Data_overview function", { 
+  Data_overview_maxmin <- function(x, na.rm = TRUE) {
+    Max_minus_min = (max({{ x }}) - min({{ x }}))
+  }
+  a <- c(24, 20)
+expect_equal(Data_overview_maxmin(a), 4)  
+})  
+```
+
+```{r testing the Mean code}
+test_that( "Testing the Mean computation within the Data_overview function", { 
+  Data_overview_mean <- function(x, na.rm = TRUE) {
+    Mean = mean({{ x }})
+  }
+  a <- c(24, 20)
+expect_equal(Data_overview_mean(a), 22)  
+})     
+```
+
+
+#In the following code chunk, I learned that although the standard deviation of 24 and 20 is ROUGHLY 2.828, simply comparing the output to "2.828" is not equal, and thus outputs an error. If I were to replace 2.828 with "sd(a)", then the test will pass.
+
+
+```{r testing the Standard deviation code}
+test_that( "Testing the Standard deviation computation within the Data_overview function", { 
+  Data_overview_Stdev <- function(x, na.rm = TRUE) {
+     Stdev = sd({{ x }})
+  }
+  a <- c(24, 20)
+expect_equal(Data_overview_Stdev(a), 2.828)
+})     
+```
+
+
+
+
+
+
+
+
+
+
