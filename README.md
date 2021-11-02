@@ -2,7 +2,7 @@
 # STAT-545B-Assignment-Repository
 
 
-**Welcome**
+**Welcome!**
 ---
 This repository will contain the projects I will be working on throughout the course *STAT545B*. At the time of the making of this `README.md` file, this repository contains only one file, which is the `.rmd` file containing the code I created for my Assignment B1. In the near future, however, I suspect that this repository will be supplemented with additional assignments. 
 
