@@ -1,0 +1,23 @@
+Package: AssignmentB2
+Title: Overview statistics of numerical data
+Version: 0.0.0.9000
+Authors@R: 
+    person("Kai", "von Rentzell", role = c("aut", "cre"), email = "kaialainv@gmail.com")
+Description: This function will group a given given numerical variable (y) by a variable (x). 
+    Specifically, it will output the max-min value of numerical variable (y), mean and 
+    standard deviation of a numerical variable. If an non-numerical variable is selected for 
+    variable (y), it will provide an error message warning the user.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Suggests: 
+    testthat,
+    knitr,
+    rmarkdown
+Imports: 
+    palmerpenguins,
+    magrittr,
+    dplyr
+VignetteBuilder: knitr

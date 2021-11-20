@@ -1,0 +1,55 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# AssignmentB2
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of AssignmentB2 is to showcase a function I created in STAT545B. The function I created is called, `Data_overview`. This function will provide basic summary statistics of a given numerical variable y (Max-Min, Mean, and Standard Deviation), grouped by a variable x...
+
+## Installation
+
+AssignmentB2 is not yet on CRAN, but you can download it form this repository using the following R command: 
+
+``` r
+devtools::install.github("stat545ubc-2021/Assignments-Kaialain")
+```
+
+## Example
+
+This is a basic example which shows you how to solve a common problem. The following example will showcase the Data_overview function using the cars dataset. Using the Data_overview function, I have retrieved the mean and standard deviation of distance travelled, grouped by the speed of the car.
+
+```{r example}
+library(AssignmentB2)
+
+Data_overview(cars, speed, dist)
+```
+
+What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+
+```{r cars}
+summary(cars)
+```
+
+You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date.
+
+You can also embed plots, for example:
+
+```{r pressure, echo = FALSE}
+plot(pressure)
+```
+
+In that case, don't forget to commit and push the resulting figure files, so they display on GitHub!
