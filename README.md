@@ -19,7 +19,7 @@ AssignmentB2 is not yet on CRAN, but you can download it form this
 repository using the following R command:
 
 ``` r
-devtools::install.github("stat545ubc-2021/AssignmentsB2-Kaialain")
+devtools::install.github("stat545ubc-2021/Assignments-Kaialain")
 ```
 
 ## Example
